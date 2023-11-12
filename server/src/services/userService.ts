@@ -5,7 +5,7 @@ import * as CryptoJS from "crypto-js";
 
 const userRepository = AppDataSource.getRepository(User);
 
-const PASSWORD_SECRET = process.env.PASSWORD_SECRET || "thisisasecret";
+const PASSWORD_SECRET = process.env.PASSWORD_SECRET || "";
 
 export const userService = {
   //get all

@@ -3,8 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { User } from "../models/User";
 import { AppDataSource } from "../config/data-source";
 
-const accessSecret =
-  process.env.ACCESS_TOKEN_SECRET || "thisisaccesstokensecret";
+const accessSecret = process.env.ACCESS_TOKEN_SECRET || "";
 const userRepository = AppDataSource.getRepository(User);
 
 export async function verifyAccessToken(
