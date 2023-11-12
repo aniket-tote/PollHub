@@ -29,9 +29,7 @@ export class Poll {
   @Column({ type: "timestamp" })
   closeTime: Date;
 
-  @OneToMany(() => Option, (option) => option.poll, {
-    eager: true,
-  })
+  @OneToMany(() => Option, (option) => option.poll, { eager: true })
   options: Option[];
 
   @ManyToOne(() => User, (user) => user.polls)

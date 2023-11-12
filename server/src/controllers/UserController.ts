@@ -30,4 +30,21 @@ export const UserController = {
       return res.status(500).json({ error: "Internal Server Error" });
     }
   },
+
+  //update
+  async updateUser(req: Request, res: Response) {
+    try {
+      const { name, email } = req.body;
+      if (!name || !email) {
+        return res.status(400).json({ error: "Invalid Request Body" });
+      }
+      const user = await userService.updateUser(req.params.id, { name, email });
+      return res.json({ id: user.id, name: user.name, email: user.email });
+    } catch (error) {
+      if (error instanceof MyError) {
+        return res.status(400).json({ error: error.message });
+      }
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
 };

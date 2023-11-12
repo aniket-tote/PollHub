@@ -5,7 +5,7 @@ import * as CryptoJS from "crypto-js";
 
 const userRepository = AppDataSource.getRepository(User);
 
-const PASSWORD_SECRET = process.env.PASSWORD_SECRET || "secret";
+const PASSWORD_SECRET = process.env.PASSWORD_SECRET || "thisisasecret";
 
 export const userService = {
   //get all
@@ -33,6 +33,17 @@ export const userService = {
     ).toString();
 
     return await userRepository.save(newUser);
+  },
+
+  //update
+  async updateUser(id: string, userData: { name: string; email: string }) {
+    const user = await userRepository.findOneBy({ id: parseInt(id, 10) });
+    if (user == null) {
+      throw new MyError("User not found with id: " + id);
+    }
+    user.name = userData.name;
+    user.email = userData.email;
+    return await userRepository.save(user);
   },
 
   //get by id and password

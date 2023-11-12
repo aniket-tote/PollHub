@@ -3,8 +3,10 @@ import { userService } from "../services/userService";
 import { MyError } from "../util/MyError";
 import * as jwt from "jsonwebtoken";
 
-const accessSecret = process.env.ACCESS_TOKEN_SECRET || "secret";
-const refreshSecret = process.env.REFRESH_TOKEN_SECRET || "secret";
+const accessSecret =
+  process.env.ACCESS_TOKEN_SECRET || "thisisaccesstokensecret";
+const refreshSecret =
+  process.env.REFRESH_TOKEN_SECRET || "thisisrefreshtokensecret";
 
 export const AuthController = {
   //login user
@@ -19,7 +21,7 @@ export const AuthController = {
             email: user.email,
           },
           accessSecret,
-          { expiresIn: "10m" }
+          { expiresIn: "60m" }
         );
 
         const refreshToken = jwt.sign(

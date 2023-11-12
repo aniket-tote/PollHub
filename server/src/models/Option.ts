@@ -21,6 +21,6 @@ export class Option {
   })
   poll: Poll;
 
-  @OneToMany(() => User, (user) => user.id)
-  votes: User[];
+  @Column("simple-array")
+  votes: string[];
 }
