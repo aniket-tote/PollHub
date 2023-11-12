@@ -1,4 +1,4 @@
-# Awesome Project Build with Typescript, Express, TypeORM, Nextjs and TailwindCSS
+## Project Build with Typescript, Express, TypeORM, Nextjs and TailwindCSS
 
 Steps to run this project:
 
