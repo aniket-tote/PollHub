@@ -86,10 +86,10 @@ export const AuthController = {
       const user = await userService.addUser(req.body);
       return res
         .status(201)
-        .json({ message: `${user.name}.Your are registered successfully` });
+        .json({ message: `${user.name}. Your are registered successfully` });
     } catch (error) {
       if (error instanceof MyError) {
-        return res.status(400).json({ error: error.message });
+        return res.status(400).json({ errors: [{ msg: error.message }] });
       }
       return res.status(500).json({ error: "Internal Server Error" });
     }
