@@ -49,7 +49,7 @@ const Navbar = () => {
         </Link>
       </div>
       <div
-        className={`navoptions flex md:gap-2 flex-col md:items-center md:flex-row absolute md:relative md:translate-x-0 left-0 md:top-0 top-14 w-full md:w-max duration-500 transition-transform ease-in-out ${
+        className={`navoptions flex md:gap-2 flex-col md:items-center md:flex-row absolute md:relative md:translate-x-0 left-0 md:top-0 top-14 w-full md:w-max screenMinusNavHeight md:h-max duration-500 transition-transform ease-in-out ${
           navOpen ? "translate-x-0" : "-translate-x-full"
         } ${colorMode === "dark" ? "bg-[#111113]" : "bg-white"}`}
       >

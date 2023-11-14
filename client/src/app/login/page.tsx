@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import useColorMode from "@/redux/hooks/useColorMode";
 import axios from "axios";
+import { initiateInterceptor } from "../../service/axiosConfig";
 import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 
@@ -50,7 +51,7 @@ const Login = () => {
             e.preventDefault();
 
             const res = await axios.post(
-              "http://localhost:5000/auth/login",
+              `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
               userData,
               {
                 headers: {

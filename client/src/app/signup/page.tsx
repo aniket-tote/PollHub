@@ -47,7 +47,7 @@ const Signup = () => {
             e.preventDefault();
 
             const res = await axios.post(
-              "http://localhost:5000/auth/signup",
+              `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/signup`,
               userData,
               {
                 headers: {

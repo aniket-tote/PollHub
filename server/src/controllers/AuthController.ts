@@ -19,7 +19,7 @@ export const AuthController = {
             email: user.email,
           },
           accessSecret,
-          { expiresIn: "60m" }
+          { expiresIn: "10m" }
         );
 
         const refreshToken = jwt.sign(
