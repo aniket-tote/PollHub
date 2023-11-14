@@ -1,11 +1,11 @@
 "use client";
 
 import useColorMode from "@/redux/hooks/useColorMode";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import React from "react";
-import { BiSun, BiMoon, BiHomeAlt2 } from "react-icons/bi";
-import { RxCounterClockwiseClock } from "react-icons/rx";
+import { BiSun, BiMoon } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
@@ -14,6 +14,21 @@ const Navbar = () => {
   const pathname = usePathname();
 
   const [navOpen, setNavOpen] = React.useState<boolean>(false);
+
+  const handleLogout = async () => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/logout`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
 
   return (
     <div
@@ -96,7 +111,19 @@ const Navbar = () => {
           <span>Previous polls</span>
         </button>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
+        {localStorage.getItem("token") && (
+          <button
+            onClick={() => {
+              handleLogout();
+            }}
+            className={`px-2 py-1 cursor-pointer rounded-lg flex justify-center items-center ${
+              colorMode === "dark" ? "hover:bg-[#212225]" : "hover:bg-[#E1DEF2]"
+            }`}
+          >
+            Logout
+          </button>
+        )}
         <button
           onClick={() => {
             router.push("/about");
@@ -120,7 +147,7 @@ const Navbar = () => {
 
         <button
           className={`w-9 h-9 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-2xl ${
-            colorMode === "dark" ? "hover:bg-[#444444]" : "hover:bg-[#eeeeee]"
+            colorMode === "dark" ? "hover:bg-[#212225]" : "hover:bg-[#E1DEF2]"
           }`}
           onClick={toggleColorMode}
         >

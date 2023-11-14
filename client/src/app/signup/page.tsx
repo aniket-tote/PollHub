@@ -22,6 +22,12 @@ const Signup = () => {
 
   const router = useRouter();
 
+  React.useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.replace("/");
+    }
+  }, []);
+
   return (
     <div
       className={`screenMinusNavHeight w-full flex flex-col items-center px-6 py-12 ${
@@ -53,6 +59,7 @@ const Signup = () => {
                 headers: {
                   "Content-Type": "application/json",
                 },
+                withCredentials: true,
               }
             );
             const resData = await res.data;

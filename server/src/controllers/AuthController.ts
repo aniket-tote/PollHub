@@ -19,7 +19,7 @@ export const AuthController = {
             email: user.email,
           },
           accessSecret,
-          { expiresIn: "10m" }
+          { expiresIn: "1m" }
         );
 
         const refreshToken = jwt.sign(
@@ -29,14 +29,15 @@ export const AuthController = {
             email: user.email,
           },
           refreshSecret,
-          { expiresIn: "1d" }
+          { expiresIn: "5m" }
         );
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: true,
           sameSite: "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
+          // maxAge: 7 * 24 * 60 * 60 * 1000,
+          maxAge: 5 * 60 * 1000,
         });
 
         return res.json({ accessToken });
@@ -45,7 +46,23 @@ export const AuthController = {
       if (error instanceof MyError) {
         return res.status(400).json({ error: error.message });
       }
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error });
+    }
+  },
+
+  //logout user
+  async logoutUser(req: Request, res: Response) {
+    try {
+      // Clear the refreshToken cookie
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+
+      return res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+      return res.status(500).json({ error });
     }
   },
 
@@ -71,12 +88,12 @@ export const AuthController = {
           email: decoded.email,
         },
         accessSecret,
-        { expiresIn: "10m" }
+        { expiresIn: "1m" }
       );
 
       return res.json({ accessToken: newAccessToken });
     } catch (error) {
-      return res.status(401).json({ error: "Invalid refresh token" });
+      return res.status(401).json({ error });
     }
   },
 
@@ -91,7 +108,7 @@ export const AuthController = {
       if (error instanceof MyError) {
         return res.status(400).json({ errors: [{ msg: error.message }] });
       }
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error });
     }
   },
 };

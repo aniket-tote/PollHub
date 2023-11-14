@@ -12,7 +12,7 @@ export const UserController = {
       }
       return res.json(users);
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error });
     }
   },
 
@@ -27,7 +27,7 @@ export const UserController = {
       }
       return res.json({ id: user.id, name: user.name, email: user.email });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error });
     }
   },
 
@@ -44,7 +44,7 @@ export const UserController = {
       if (error instanceof MyError) {
         return res.status(400).json({ error: error.message });
       }
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({ error });
     }
   },
 };

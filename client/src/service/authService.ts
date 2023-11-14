@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
 import { initiateInterceptor } from "./axiosConfig";
 
@@ -49,8 +49,19 @@ const authService = {
       localStorage.setItem("token", accessToken);
       initiateInterceptor();
     } catch (error) {
-      console.error(error);
+      if (
+        axios.isAxiosError(error) &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        authService.logout();
+      } else {
+        console.log(error);
+      }
     }
+  },
+
+  logout: () => {
+    localStorage.removeItem("token");
   },
 };
 

@@ -32,6 +32,6 @@ export async function verifyAccessToken(
     req.user = user;
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Invalid access token" });
+    return res.status(401).json({ error });
   }
 }
