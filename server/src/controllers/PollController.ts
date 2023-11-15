@@ -47,6 +47,32 @@ export const PollController = {
     }
   },
 
+  //get active polls
+  async getActivePolls(req: Request, res: Response) {
+    try {
+      const polls = await pollService.getActivePolls();
+      if (polls.length == 0) {
+        return res.status(404).json({ error: "No Polls Found" });
+      }
+      return res.json(polls);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
+  },
+
+  //get inactive polls
+  async getInactivePolls(req: Request, res: Response) {
+    try {
+      const polls = await pollService.getInactivePolls();
+      if (polls.length == 0) {
+        return res.status(404).json({ error: "No Polls Found" });
+      }
+      return res.json(polls);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
+  },
+
   //create
   async createPoll(req: Request, res: Response) {
     try {

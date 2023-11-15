@@ -1,3 +1,4 @@
+import { LessThan, MoreThan } from "typeorm";
 import { AppDataSource } from "../config/data-source";
 import { Poll } from "../models/Poll";
 import { User } from "../models/User";
@@ -20,6 +21,20 @@ export const pollService = {
   async getPollsByUser(user: User) {
     return await pollRepository.find({
       where: { user: { id: user.id } },
+    });
+  },
+
+  //get active polls
+  async getActivePolls() {
+    return await pollRepository.find({
+      where: { closeTime: MoreThan(new Date()) },
+    });
+  },
+
+  //get inactive polls
+  async getInactivePolls() {
+    return await pollRepository.find({
+      where: { closeTime: LessThan(new Date()) },
     });
   },
 
