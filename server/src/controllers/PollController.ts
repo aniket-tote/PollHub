@@ -54,7 +54,7 @@ export const PollController = {
         req.body;
       const user = req.user;
 
-      if (!question || !name || !createdAt || !closeTime || !options) {
+      if (!question || !createdAt || !closeTime || !options) {
         return res.status(400).json({ error: "Invalid Request Body" });
       }
 
@@ -67,7 +67,7 @@ export const PollController = {
         options,
         user
       );
-      return res.json(poll);
+      return res.status(201).json(poll);
     } catch (error) {
       if (error instanceof MyError) {
         return res.status(400).json({ error: error.message });

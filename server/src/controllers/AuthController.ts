@@ -19,7 +19,7 @@ export const AuthController = {
             email: user.email,
           },
           accessSecret,
-          { expiresIn: "1m" }
+          { expiresIn: "10m" }
         );
 
         const refreshToken = jwt.sign(
@@ -29,15 +29,14 @@ export const AuthController = {
             email: user.email,
           },
           refreshSecret,
-          { expiresIn: "5m" }
+          { expiresIn: "7d" }
         );
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: true,
           sameSite: "strict",
-          // maxAge: 7 * 24 * 60 * 60 * 1000,
-          maxAge: 5 * 60 * 1000,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
         return res.json({ accessToken });

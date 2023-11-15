@@ -5,8 +5,11 @@ import axios, { initiateInterceptor } from "../service/axiosConfig";
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
+import useColorMode from "@/redux/hooks/useColorMode";
+import CreatePoll from "@/components/CreatePoll";
 
 export default function Home() {
+  const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
   const [loading, setLoading] = React.useState(true);
 
@@ -56,8 +59,24 @@ export default function Home() {
     return <div>Loading...</div>;
   } else {
     return (
-      <main className="flex screenMinusNavHeight flex-col bg-[#101011]">
-        home
+      <main
+        className={`screenMinusNavHeight flex ${
+          colorMode === "dark"
+            ? "bg-[#101011] text-white"
+            : "bg-slate-50 text-slate-900 "
+        }`}
+      >
+        <div className="add w-1/3 h-full py-8 px-10">
+          <CreatePoll />
+        </div>
+        <div
+          className={`active w-1/3 h-full border-x ${
+            colorMode === "dark" ? "border-gray-800" : "border-gray-300 "
+          }`}
+        >
+          active
+        </div>
+        <div className="historic w-1/3 h-full">historic</div>
       </main>
     );
   }

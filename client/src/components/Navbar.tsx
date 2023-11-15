@@ -7,6 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import React from "react";
 import { BiSun, BiMoon } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
+import { TbLogout2 } from "react-icons/tb";
 
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -14,6 +15,7 @@ const Navbar = () => {
   const pathname = usePathname();
 
   const [navOpen, setNavOpen] = React.useState<boolean>(false);
+  const [isUserLogged, setIsUserLogged] = React.useState<boolean>(false);
 
   const handleLogout = async () => {
     const res = await axios.post(
@@ -27,12 +29,20 @@ const Navbar = () => {
       }
     );
     localStorage.removeItem("token");
+    axios.interceptors.request.clear();
+    setIsUserLogged(false);
     router.push("/login");
   };
 
+  React.useEffect(() => {
+    localStorage.getItem("token")
+      ? setIsUserLogged(true)
+      : setIsUserLogged(false);
+  }, [pathname]);
+
   return (
     <div
-      className={`w-full h-14 flex justify-between border-b shadow items-center px-4 sticky top-0 z-10 ${
+      className={`w-full h-14 flex justify-between border-b shadow items-center px-2 sticky top-0 z-10 ${
         colorMode === "dark"
           ? "bg-[#111113] text-white border-gray-800"
           : "bg-white text-slate-900 border-gray-300"
@@ -112,23 +122,23 @@ const Navbar = () => {
         </button>
       </div>
       <div className="flex gap-2 items-center">
-        {localStorage.getItem("token") && (
+        {isUserLogged && (
           <button
             onClick={() => {
               handleLogout();
             }}
-            className={`px-2 py-1 cursor-pointer rounded-lg flex justify-center items-center ${
+            className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
               colorMode === "dark" ? "hover:bg-[#212225]" : "hover:bg-[#E1DEF2]"
             }`}
           >
-            Logout
+            <TbLogout2 />
           </button>
         )}
         <button
           onClick={() => {
             router.push("/about");
           }}
-          className={`w-9 h-9 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
+          className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
             pathname === "/about"
               ? `${
                   colorMode === "dark"
@@ -146,7 +156,7 @@ const Navbar = () => {
         </button>
 
         <button
-          className={`w-9 h-9 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-2xl ${
+          className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-2xl ${
             colorMode === "dark" ? "hover:bg-[#212225]" : "hover:bg-[#E1DEF2]"
           }`}
           onClick={toggleColorMode}
