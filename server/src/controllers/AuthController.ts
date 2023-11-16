@@ -87,7 +87,7 @@ export const AuthController = {
           email: decoded.email,
         },
         accessSecret,
-        { expiresIn: "1m" }
+        { expiresIn: "10m" }
       );
 
       return res.json({ accessToken: newAccessToken });

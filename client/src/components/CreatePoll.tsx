@@ -122,6 +122,7 @@ const CreatePoll = () => {
           <input
             type="text"
             name="question"
+            id="question"
             value={createPollData.question}
             onChange={(e) => {
               setCreatePollData((preValues) => {
@@ -144,6 +145,7 @@ const CreatePoll = () => {
           <input
             type="text"
             name="name"
+            id="name"
             value={createPollData.name}
             onChange={(e) => {
               setCreatePollData((preValues) => {
@@ -168,6 +170,7 @@ const CreatePoll = () => {
           <textarea
             rows={2}
             name="description"
+            id="description"
             value={createPollData.description}
             onChange={(e) => {
               setCreatePollData((preValues) => {
@@ -183,7 +186,7 @@ const CreatePoll = () => {
           />
         </div>
         <div>
-          <label htmlFor="question" className="block mb-2 text-sm font-medium">
+          <label htmlFor="option" className="block mb-2 text-sm font-medium">
             Options
           </label>
           <div className="flex flex-col gap-1.5">

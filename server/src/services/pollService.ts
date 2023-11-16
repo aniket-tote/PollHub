@@ -9,7 +9,19 @@ const pollRepository = AppDataSource.getRepository(Poll);
 export const pollService = {
   //get all
   async getAllPolls() {
-    return await pollRepository.find();
+    return await pollRepository.find({
+      relations: { user: true },
+      select: {
+        id: true,
+        question: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        closeTime: true,
+        options: true,
+        user: { name: true },
+      },
+    });
   },
 
   //get by id
@@ -34,7 +46,18 @@ export const pollService = {
   //get inactive polls
   async getInactivePolls() {
     return await pollRepository.find({
+      relations: { user: true },
       where: { closeTime: LessThan(new Date()) },
+      select: {
+        id: true,
+        question: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        closeTime: true,
+        options: true,
+        user: { name: true },
+      },
     });
   },
 

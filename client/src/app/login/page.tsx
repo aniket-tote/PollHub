@@ -26,11 +26,11 @@ const Login = () => {
 
   const router = useRouter();
 
-  // React.useEffect(() => {
-  //   if (localStorage.getItem("token")) {
-  //     router.replace("/");
-  //   }
-  // }, []);
+  React.useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.replace("/");
+    }
+  }, []);
 
   return (
     <div
