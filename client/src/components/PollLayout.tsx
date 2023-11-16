@@ -139,7 +139,7 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
           )}
         </div>
         <div className="options w-full flex flex-col gap-1">
-          {new Date(poll.closeTime) > new Date()
+          {new Date(poll.closeTime) > new Date() && !isVoted
             ? poll.options.map((option, index) => (
                 <div
                   key={option.id}
@@ -174,12 +174,18 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
                     colorMode === "dark"
                       ? "bg-[#101011] border-gray-800"
                       : "bg-slate-50 border-gray-300"
-                  }`}
+                  } `}
                 >
                   <div
                     className={`flex items-center justify-between py-1 px-2 ${
-                      colorMode === "dark" ? "bg-gray-800" : "bg-gray-300"
-                    }`}
+                      colorMode === "dark"
+                        ? `${
+                            selectedOption === option.id.toString()
+                              ? "bg-[#144240]"
+                              : "bg-gray-800"
+                          } `
+                        : "bg-gray-300"
+                    } `}
                     style={{
                       width: `${(option.votes.length / totalVotes) * 100}%`,
                     }}
