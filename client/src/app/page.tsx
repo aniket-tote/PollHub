@@ -88,36 +88,44 @@ export default function Home() {
       <main
         className={`screenMinusNavHeight flex ${
           colorMode === "dark"
-            ? "bg-[#101011] text-gray-200"
+            ? "bg-[#101011] text-gray-100"
             : "bg-slate-50 text-gray-800"
         }`}
       >
-        <div className="add w-[30%] h-full py-8 px-10">
-          <CreatePoll />
+        <div className="add hidden md:block md:w-[30%] h-full py-8 px-10">
+          <CreatePoll fetchData={fetchData} />
         </div>
         <div
-          className={`active w-[40%] h-full border-x p-5 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md scrollbar-thumb-[#144240] ${
-            colorMode === "dark" ? "border-gray-800" : "border-gray-300 "
+          className={`active w-full md:w-[40%] h-full border-x px-5 py-3 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md  ${
+            colorMode === "dark"
+              ? "border-gray-800 scrollbar-thumb-[#144240]"
+              : "border-gray-300 scrollbar-thumb-[#CCF3EA]"
           }`}
         >
-          <div className="text-lg font-semibold w-full text-center">
-            Active Polls
-          </div>
+          <div className="text-lg font-semibold w-full text-center">Active</div>
           <div className="flex flex-col gap-2">
             {activePolls.map((poll) => {
-              return <PollLayout key={poll.id} poll={poll} />;
+              return (
+                <PollLayout key={poll.id} poll={poll} fetchData={fetchData} />
+              );
             })}
           </div>
         </div>
         <div
-          className={`active w-[30%] h-full p-5 flex flex-col gap-2 max-h-full overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md scrollbar-thumb-[#144240]`}
+          className={`active hidden md:flex md:w-[30%] h-full px-5 py-3 flex-col gap-2 max-h-full overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md ${
+            colorMode === "dark"
+              ? "scrollbar-thumb-[#144240]"
+              : "scrollbar-thumb-[#CCF3EA]"
+          }`}
         >
           <div className="text-lg font-semibold w-full text-center">
-            Inactive Polls
+            Inactive
           </div>
           <div className="flex flex-col gap-2">
             {inactivePolls.map((poll) => {
-              return <PollLayout key={poll.id} poll={poll} />;
+              return (
+                <PollLayout key={poll.id} poll={poll} fetchData={fetchData} />
+              );
             })}
           </div>
         </div>

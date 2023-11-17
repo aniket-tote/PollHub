@@ -3,7 +3,7 @@ import axios from "axios";
 import React from "react";
 import toast from "react-hot-toast";
 
-const CreatePoll = () => {
+const CreatePoll = ({ fetchData }: { fetchData: () => {} }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const [createPollData, setCreatePollData] = React.useState<{
@@ -97,6 +97,7 @@ const CreatePoll = () => {
               closeTime: new Date(),
               createdAt: new Date(),
             });
+            fetchData();
           } else {
             toast.error(resData.error, {
               position: "top-center",

@@ -6,23 +6,38 @@ import { Poll } from "@/app/page";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
-const PollLayout = ({ poll }: { poll: Poll }) => {
+const PollLayout = ({
+  poll,
+  fetchData,
+}: {
+  poll: Poll;
+  fetchData: () => {};
+}) => {
   const { colorMode } = useColorMode();
 
   const [isVoted, setIsVoted] = React.useState<boolean>(false);
+
+  const [isVoting, setIsVoting] = React.useState<boolean>(true);
 
   const [selectedOption, setSelectedOption] = React.useState<string | null>(
     null
   );
 
+  const [remainingTime, setRemainingTime] = React.useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
   const handleOptionChange = (option: string) => {
-    !isVoted && setSelectedOption(option);
+    isVoting && setSelectedOption(option);
   };
 
   const handlesubmit = async (optionId: string) => {
     try {
       const res = await axios.put(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/poll/vote/${optionId}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/poll/${poll.id}/vote/${optionId}`,
         {},
         {
           headers: {
@@ -40,6 +55,8 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
           duration: 2000,
         });
         setIsVoted(true);
+        setIsVoting(false);
+        fetchData();
       }
     } catch (error) {
       if (
@@ -56,10 +73,49 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
     }
   };
 
-  let totalVotes = 0;
-  poll.options.forEach((option) => {
-    totalVotes += option.votes.length;
-  });
+  const handleCancelVote = async (optionId: string) => {
+    if (!isVoted) {
+      setSelectedOption(null);
+      return;
+    }
+    try {
+      const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/poll/${poll.id}/unvote/${optionId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = await res.data;
+
+      if (res.status === 200 && data) {
+        toast.success(`Vote Discarded!`, {
+          position: "top-center",
+          duration: 2000,
+        });
+        setSelectedOption(null);
+        setIsVoted(false);
+        setIsVoting(false);
+        fetchData();
+      }
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        (error as AxiosError).response?.status === 401
+      ) {
+        toast.error(`Your session is expired! Please login again`, {
+          position: "top-center",
+          duration: 2000,
+        });
+      } else {
+        console.log(error);
+      }
+    }
+  };
 
   let decodedToken: {
     id: number;
@@ -69,15 +125,49 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
     exp: number;
   };
 
-  React.useEffect(() => {
-    decodedToken = jwtDecode(JSON.stringify(localStorage.getItem("token")));
+  decodedToken = jwtDecode(JSON.stringify(localStorage.getItem("token")));
 
+  let totalVotes = 0;
+
+  poll.options.forEach((option) => {
+    totalVotes += option.votes.length;
+  });
+
+  React.useEffect(() => {
     poll.options.forEach((option) => {
       if (option.votes.includes(decodedToken.id.toString())) {
         setIsVoted(true);
+        setIsVoting(false);
         setSelectedOption(option.id.toString());
       }
     });
+
+    !isActivePoll() && setIsVoting(false);
+
+    const intervalId = setInterval(() => {
+      const now = new Date().getTime();
+      const targetDate = new Date(poll.closeTime).getTime();
+
+      const timeDifference = targetDate - now;
+
+      if (timeDifference > 0) {
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+        setRemainingTime({ days, hours, minutes, seconds });
+      } else {
+        setRemainingTime({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   function timeAgo(dateString: string): string {
@@ -101,36 +191,62 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
     }
   }
 
+  const isActivePoll = () => {
+    return new Date(poll.closeTime) > new Date();
+  };
+
   return (
     <div
-      className={`flex border shadow p-2 rounded overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md scrollbar-thumb-[#144240] ${
+      className={`flex border shadow p-2 rounded overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md  ${
         colorMode === "dark"
-          ? "bg-[#111113] border-gray-800"
-          : "bg-white border-gray-300"
+          ? "bg-[#111113] border-gray-800 scrollbar-thumb-[#144240]"
+          : "bg-white border-gray-300 scrollbar-thumb-[#CCF3EA]"
       }`}
     >
       <div className="left py-1">
         <div
-          className={`profile w-11 h-11 rounded-full text-2xl border flex justify-center items-center ${
+          className={`profile w-11 h-11 rounded-full text-xl border flex justify-center items-center ${
             colorMode === "dark" ? "border-gray-800" : "border-gray-300"
           }`}
         >
-          <CgProfile />
+          {poll.user.name
+            .split(" ")
+            .map((name) => name[0].toUpperCase())
+            .join("")}
         </div>
       </div>
       <div className="pollData w-full px-2 flex flex-col gap-2">
         <div className="flex flex-col gap-1">
-          <div className="nameandtime flex text-sm gap-2">
-            <div className="name font-semibold">{poll.user.name}</div>
-            <div className="time text-gray-600">{timeAgo(poll.createdAt)}</div>
+          <div className="nameandtime flex justify-between text-sm ">
+            <div className="flex gap-2">
+              <div className="name font-semibold">{poll.user.name}</div>
+              <div className="time text-gray-600">
+                {timeAgo(poll.createdAt)}
+              </div>
+            </div>
+            {isActivePoll() && (
+              <div className="remainingtime">
+                {remainingTime.days > 0 && `${remainingTime.days} days, `}
+                {`${String(remainingTime.hours).padStart(2, "0")}:${String(
+                  remainingTime.minutes
+                ).padStart(2, "0")}:${String(remainingTime.seconds).padStart(
+                  2,
+                  "0"
+                )}`}
+              </div>
+            )}
           </div>
           <div className="question">
             <div className="font-semibold">{poll.question}</div>
           </div>
-          <div className="description">
+          <div
+            className={`${
+              colorMode === "dark" ? " text-gray-300" : " text-gray-700"
+            }`}
+          >
             <div className="text-sm">{poll.description}</div>
           </div>
-          {new Date(poll.closeTime) < new Date() && (
+          {(!isActivePoll() || isVoted) && (
             <div className="votes">
               <div className="text-sm text-gray-600">
                 {totalVotes} {totalVotes > 1 ? "votes" : "vote"}
@@ -139,21 +255,24 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
           )}
         </div>
         <div className="options w-full flex flex-col gap-1">
-          {new Date(poll.closeTime) > new Date() && !isVoted
+          {isVoting
             ? poll.options.map((option, index) => (
                 <div
                   key={option.id}
                   onClick={() => handleOptionChange(option.id.toString())}
                   className={`w-full rounded border cursor-pointer flex py-1 px-2 ${
                     colorMode === "dark"
-                      ? "bg-[#101011] border-gray-800"
-                      : "bg-slate-50 border-gray-300"
-                  }
-                  ${
-                    selectedOption === option.id.toString()
-                      ? "border-[#144240]"
-                      : ""
-                  }`}
+                      ? `${
+                          selectedOption === option.id.toString()
+                            ? "border-[#CCF3EA]"
+                            : "bg-[#101011] border-gray-800"
+                        }`
+                      : `${
+                          selectedOption === option.id.toString()
+                            ? "border-[#144240]"
+                            : "bg-slate-50 border-gray-300"
+                        } `
+                  } `}
                 >
                   <input
                     id={index.toString()}
@@ -177,14 +296,19 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
                   } `}
                 >
                   <div
-                    className={`flex items-center justify-between py-1 px-2 ${
-                      colorMode === "dark"
+                    className={`flex items-center gap-2 justify-between py-1 px-2 ${
+                      option.votes.length > 0 &&
+                      (colorMode === "dark"
                         ? `${
                             selectedOption === option.id.toString()
                               ? "bg-[#144240]"
                               : "bg-gray-800"
                           } `
-                        : "bg-gray-300"
+                        : `${
+                            selectedOption === option.id.toString()
+                              ? "bg-[#CCF3EA]"
+                              : "bg-gray-300"
+                          }`)
                     } `}
                     style={{
                       width: `${(option.votes.length / totalVotes) * 100}%`,
@@ -192,31 +316,17 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
                   >
                     <p className="">{option.text}</p>
                     <div className="text-sm text-gray-600">
-                      {((option.votes.length / totalVotes) * 100).toFixed(2)}%
+                      {!isActivePoll() &&
+                        ((option.votes.length / totalVotes) * 100).toFixed(2) +
+                          "%"}
                     </div>
                   </div>
                 </div>
               ))}
         </div>
-        {new Date(poll.closeTime) > new Date() &&
+        {isActivePoll() &&
           selectedOption &&
-          (isVoted ? (
-            <div className="flex gap-2 w-full justify-end">
-              <button
-                type="submit"
-                className={`px-3 py-1 text-center rounded ${
-                  colorMode === "dark"
-                    ? "bg-[#144240] hover:bg-[#0F2D2C]"
-                    : "bg-[#CCF3EA] hover:bg-[#E0F8F3]"
-                }`}
-                onClick={() => {
-                  setIsVoted(false);
-                }}
-              >
-                Change vote
-              </button>
-            </div>
-          ) : (
+          (isVoting ? (
             <div className="flex gap-2 w-full justify-end">
               <button
                 type="submit"
@@ -226,7 +336,7 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
                     : "border-[#CCF3EA] hover:bg-[#E0F8F3]"
                 }`}
                 onClick={() => {
-                  setSelectedOption(null);
+                  handleCancelVote(selectedOption);
                 }}
               >
                 cancel
@@ -243,6 +353,22 @@ const PollLayout = ({ poll }: { poll: Poll }) => {
                 }}
               >
                 vote
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2 w-full justify-end">
+              <button
+                type="submit"
+                className={`px-3 py-1 text-center rounded ${
+                  colorMode === "dark"
+                    ? "bg-[#144240] hover:bg-[#0F2D2C]"
+                    : "bg-[#CCF3EA] hover:bg-[#E0F8F3]"
+                }`}
+                onClick={() => {
+                  setIsVoting(true);
+                }}
+              >
+                Change vote
               </button>
             </div>
           ))}
