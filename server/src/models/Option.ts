@@ -16,9 +16,7 @@ export class Option {
   @Column()
   text: string;
 
-  @ManyToOne(() => Poll, (poll) => poll.options, {
-    cascade: true,
-  })
+  @ManyToOne(() => Poll, (poll) => poll.options)
   poll: Poll;
 
   @Column("simple-array")

@@ -39,13 +39,4 @@ export const optionService = {
       await optionRepository.save(option);
     }
   },
-
-  //vote
-  async vote(id: string, user: User) {
-    const option = await optionRepository.findOneBy({ id: parseInt(id, 10) });
-    if (option) {
-      option.votes.push(user.id.toString());
-      await optionRepository.save(option);
-    }
-  },
 };

@@ -3,8 +3,10 @@ import { AppDataSource } from "../config/data-source";
 import { Poll } from "../models/Poll";
 import { User } from "../models/User";
 import { optionService } from "./optionService";
+import { Option } from "../models/Option";
 
 const pollRepository = AppDataSource.getRepository(Poll);
+const optionRepository = AppDataSource.getRepository(Option);
 
 export const pollService = {
   //get all
@@ -78,13 +80,59 @@ export const pollService = {
     newPoll.createdAt = createdAt;
     newPoll.closeTime = closeTime;
     newPoll.user = user;
-
-    const savedPoll = await pollRepository.save(newPoll);
+    newPoll.options = [];
 
     options.map(async (optionText: any) => {
-      optionService.addOptionToPoll(optionText, savedPoll);
+      const option = new Option();
+      option.text = optionText;
+      option.votes = [];
+      newPoll.options.push(option);
     });
+    const savedPoll = await pollRepository.save(newPoll);
 
     return savedPoll;
+  },
+
+  //vote
+  async vote(pollId: string, optionId: string, user: User) {
+    const poll = await pollRepository.findOne({
+      where: { id: parseInt(pollId) },
+    });
+    if (poll) {
+      poll.options.map(
+        (option: { id: number; text: string; votes: string[] }) => {
+          option.votes = option.votes.filter((vote: string) => {
+            return parseInt(vote) !== user.id;
+          });
+        }
+      );
+      poll.options.map(
+        (option: { id: number; text: string; votes: string[] }) => {
+          if (option.id === parseInt(optionId)) {
+            option.votes.push(user.id.toString());
+          }
+        }
+      );
+      await pollRepository.save(poll);
+    }
+  },
+
+  //unvote
+  async unvote(pollId: string, optionId: string, user: User) {
+    const poll = await pollRepository.findOne({
+      where: { id: parseInt(pollId) },
+    });
+    if (poll) {
+      poll.options.map(
+        (option: { id: number; text: string; votes: string[] }) => {
+          if (option.id === parseInt(optionId)) {
+            option.votes = option.votes.filter((vote: string) => {
+              return parseInt(vote) !== user.id;
+            });
+          }
+        }
+      );
+      await pollRepository.save(poll);
+    }
   },
 };

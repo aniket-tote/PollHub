@@ -106,12 +106,32 @@ export const PollController = {
   async vote(req: Request, res: Response) {
     try {
       const user = req.user;
-      const optionId = req.params.id;
+      const pollId = req.params.pollId;
+      const optionId = req.params.optionId;
       if (!optionId) {
         return res.status(400).json({ error: "Invalid Request Body" });
       }
-      await optionService.vote(optionId, user);
+      await pollService.vote(pollId, optionId, user);
       return res.json({ message: "Voted Successfully" });
+    } catch (error) {
+      if (error instanceof MyError) {
+        return res.status(400).json({ error: error.message });
+      }
+      return res.status(500).json({ error });
+    }
+  },
+
+  //unvote
+  async unvote(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      const pollId = req.params.pollId;
+      const optionId = req.params.optionId;
+      if (!optionId) {
+        return res.status(400).json({ error: "Invalid Request Body" });
+      }
+      await pollService.unvote(pollId, optionId, user);
+      return res.json({ message: "Unvoted Successfully" });
     } catch (error) {
       if (error instanceof MyError) {
         return res.status(400).json({ error: error.message });
