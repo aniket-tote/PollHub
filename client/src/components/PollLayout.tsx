@@ -296,7 +296,7 @@ const PollLayout = ({
                   } `}
                 >
                   <div
-                    className={`flex items-center gap-2 justify-between py-1 px-2 ${
+                    className={`flex items-center gap-2 w-max justify-between py-1 px-2 ${
                       option.votes.length > 0 &&
                       (colorMode === "dark"
                         ? `${
@@ -311,7 +311,11 @@ const PollLayout = ({
                           }`)
                     } `}
                     style={{
-                      width: `${(option.votes.length / totalVotes) * 100}%`,
+                      width: `${
+                        option.votes.length > 0
+                          ? (option.votes.length / totalVotes) * 100
+                          : "max-content"
+                      }%`,
                     }}
                   >
                     <p className="">{option.text}</p>
