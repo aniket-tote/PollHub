@@ -197,7 +197,7 @@ const PollLayout = ({
 
   return (
     <div
-      className={`flex border shadow p-2 rounded overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md  ${
+      className={`flex border shadow p-2 h-max min-w-[33%] rounded overflow-y-auto scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md  ${
         colorMode === "dark"
           ? "bg-[#111113] border-gray-800 scrollbar-thumb-[#144240]"
           : "bg-white border-gray-300 scrollbar-thumb-[#CCF3EA]"
