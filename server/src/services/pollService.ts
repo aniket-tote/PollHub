@@ -34,7 +34,19 @@ export const pollService = {
   //get by user
   async getPollsByUser(user: User) {
     return await pollRepository.find({
+      relations: { user: true },
+      select: {
+        id: true,
+        question: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        closeTime: true,
+        options: true,
+        user: { name: true },
+      },
       where: { user: { id: user.id } },
+      order: { createdAt: "DESC" },
     });
   },
 
