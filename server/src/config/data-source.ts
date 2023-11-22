@@ -3,6 +3,7 @@ import { DataSource } from "typeorm";
 import { User } from "../models/User";
 import { Poll } from "../models/Poll";
 import { Option } from "../models/Option";
+import { Vote } from "../models/Vote";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: process.env.MYSQL_DATABASE || "",
   synchronize: true,
   logging: false,
-  entities: [User, Poll, Option],
+  entities: [User, Poll, Option, Vote],
   migrations: [],
   subscribers: [],
 });

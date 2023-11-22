@@ -12,7 +12,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: false })
   password: string;
 
   @OneToMany(() => Poll, (poll) => poll.user)

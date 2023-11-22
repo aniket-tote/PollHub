@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Poll } from "./Poll";
 import { User } from "./User";
+import { Vote } from "./Vote";
 
 @Entity()
 export class Option {
@@ -19,6 +20,6 @@ export class Option {
   @ManyToOne(() => Poll, (poll) => poll.options)
   poll: Poll;
 
-  @Column("simple-array")
-  votes: string[];
+  @OneToMany(() => Vote, (vote) => vote.option, { cascade: true, eager: true })
+  votes: Vote[];
 }

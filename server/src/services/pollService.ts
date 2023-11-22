@@ -4,6 +4,7 @@ import { Poll } from "../models/Poll";
 import { User } from "../models/User";
 import { optionService } from "./optionService";
 import { Option } from "../models/Option";
+import { Vote } from "../models/Vote";
 
 const pollRepository = AppDataSource.getRepository(Poll);
 const optionRepository = AppDataSource.getRepository(Option);
@@ -109,22 +110,23 @@ export const pollService = {
   async vote(pollId: string, optionId: string, user: User) {
     const poll = await pollRepository.findOne({
       where: { id: parseInt(pollId) },
+      relations: ["options", "options.votes", "options.votes.user"],
     });
     if (poll) {
-      poll.options.map(
-        (option: { id: number; text: string; votes: string[] }) => {
-          option.votes = option.votes.filter((vote: string) => {
-            return parseInt(vote) !== user.id;
-          });
-        }
+      poll.options.forEach((option) => {
+        option.votes = option.votes.filter((vote) => vote.user.id !== user.id);
+      });
+      const selectedOption = poll.options.find(
+        (option) => option.id === parseInt(optionId)
       );
-      poll.options.map(
-        (option: { id: number; text: string; votes: string[] }) => {
-          if (option.id === parseInt(optionId)) {
-            option.votes.push(user.id.toString());
-          }
-        }
-      );
+
+      if (selectedOption) {
+        const newVote = new Vote();
+        newVote.option = selectedOption;
+        newVote.user = user;
+        selectedOption.votes.push(newVote);
+      }
+
       await pollRepository.save(poll);
     }
   },
@@ -135,15 +137,9 @@ export const pollService = {
       where: { id: parseInt(pollId) },
     });
     if (poll) {
-      poll.options.map(
-        (option: { id: number; text: string; votes: string[] }) => {
-          if (option.id === parseInt(optionId)) {
-            option.votes = option.votes.filter((vote: string) => {
-              return parseInt(vote) !== user.id;
-            });
-          }
-        }
-      );
+      poll.options.forEach((option) => {
+        option.votes = option.votes.filter((vote) => vote.user.id !== user.id);
+      });
       await pollRepository.save(poll);
     }
   },
