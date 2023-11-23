@@ -99,7 +99,7 @@ const PollLayout = ({
         });
         setSelectedOption(null);
         setIsVoted(false);
-        setIsVoting(false);
+        setIsVoting(true);
         fetchData();
       }
     } catch (error) {
@@ -135,11 +135,13 @@ const PollLayout = ({
 
   React.useEffect(() => {
     poll.options.forEach((option) => {
-      if (option.votes.includes(decodedToken.id.toString())) {
-        setIsVoted(true);
-        setIsVoting(false);
-        setSelectedOption(option.id.toString());
-      }
+      option.votes.forEach((vote: any) => {
+        if (vote.user.id === decodedToken.id) {
+          setIsVoted(true);
+          setIsVoting(false);
+          setSelectedOption(option.id.toString());
+        }
+      });
     });
 
     !isActivePoll() && setIsVoting(false);
@@ -321,6 +323,7 @@ const PollLayout = ({
                     <p className="">{option.text}</p>
                     <div className="text-sm text-gray-600">
                       {!isActivePoll() &&
+                        option.votes.length > 0 &&
                         ((option.votes.length / totalVotes) * 100).toFixed(2) +
                           "%"}
                     </div>

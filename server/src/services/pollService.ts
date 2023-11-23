@@ -8,12 +8,13 @@ import { Vote } from "../models/Vote";
 
 const pollRepository = AppDataSource.getRepository(Poll);
 const optionRepository = AppDataSource.getRepository(Option);
+const voteRepository = AppDataSource.getRepository(Vote);
 
 export const pollService = {
   //get all
   async getAllPolls() {
     return await pollRepository.find({
-      relations: { user: true },
+      relations: ["user", "options", "options.votes", "options.votes.user"],
       select: {
         id: true,
         question: true,
@@ -35,7 +36,7 @@ export const pollService = {
   //get by user
   async getPollsByUser(user: User) {
     return await pollRepository.find({
-      relations: { user: true },
+      relations: ["user", "options", "options.votes", "options.votes.user"],
       select: {
         id: true,
         question: true,
@@ -61,7 +62,7 @@ export const pollService = {
   //get inactive polls
   async getInactivePolls() {
     return await pollRepository.find({
-      relations: { user: true },
+      relations: ["user", "options", "options.votes", "options.votes.user"],
       where: { closeTime: LessThan(new Date()) },
       select: {
         id: true,
@@ -110,12 +111,19 @@ export const pollService = {
   async vote(pollId: string, optionId: string, user: User) {
     const poll = await pollRepository.findOne({
       where: { id: parseInt(pollId) },
-      relations: ["options", "options.votes", "options.votes.user"],
+      relations: ["user", "options", "options.votes", "options.votes.user"],
     });
     if (poll) {
-      poll.options.forEach((option) => {
-        option.votes = option.votes.filter((vote) => vote.user.id !== user.id);
+      poll.options.forEach(async (option) => {
+        option.votes.forEach(async (vote) => {
+          if (vote.user.id === user.id) {
+            await voteRepository.remove(vote);
+            option.votes = option.votes.filter((v) => v.id !== vote.id);
+            await optionRepository.save(option);
+          }
+        });
       });
+
       const selectedOption = poll.options.find(
         (option) => option.id === parseInt(optionId)
       );
@@ -126,7 +134,6 @@ export const pollService = {
         newVote.user = user;
         selectedOption.votes.push(newVote);
       }
-
       await pollRepository.save(poll);
     }
   },
@@ -135,11 +142,19 @@ export const pollService = {
   async unvote(pollId: string, optionId: string, user: User) {
     const poll = await pollRepository.findOne({
       where: { id: parseInt(pollId) },
+      relations: ["user", "options", "options.votes", "options.votes.user"],
     });
     if (poll) {
-      poll.options.forEach((option) => {
-        option.votes = option.votes.filter((vote) => vote.user.id !== user.id);
+      poll.options.forEach(async (option) => {
+        option.votes.forEach(async (vote) => {
+          if (vote.user.id === user.id) {
+            await voteRepository.remove(vote);
+            option.votes = option.votes.filter((v) => v.id !== vote.id);
+            await optionRepository.save(option);
+          }
+        });
       });
+
       await pollRepository.save(poll);
     }
   },

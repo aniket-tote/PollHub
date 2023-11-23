@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Poll } from "./Poll";
+import { Vote } from "./Vote";
 
 @Entity()
 export class User {
@@ -17,4 +18,7 @@ export class User {
 
   @OneToMany(() => Poll, (poll) => poll.user)
   polls: Poll[];
+
+  @OneToMany(() => Vote, (vote) => vote)
+  votes: Vote[];
 }

@@ -10,7 +10,7 @@ export class Vote {
   @ManyToOne(() => Option, (option) => option.votes, { onDelete: "CASCADE" })
   option: Option;
 
-  @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.votes, { onDelete: "CASCADE" })
   user: User;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
