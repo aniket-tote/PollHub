@@ -2,7 +2,7 @@
 
 import useColorMode from "@/redux/hooks/useColorMode";
 import { jwtDecode } from "jwt-decode";
-import React from "react";
+import React, { useCallback } from "react";
 import { Poll } from "../page";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -21,7 +21,7 @@ const About = () => {
     email: string;
   }>({ id: 0, name: "", email: "" });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/poll/by-user`,
@@ -53,7 +53,7 @@ const About = () => {
         console.log(error);
       }
     }
-  };
+  }, [router]);
 
   React.useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -73,7 +73,7 @@ const About = () => {
       });
       fetchData();
     }
-  }, []);
+  }, [fetchData, router]);
 
   return (
     <div

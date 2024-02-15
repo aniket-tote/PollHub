@@ -1,5 +1,5 @@
 import useColorMode from "@/redux/hooks/useColorMode";
-import React from "react";
+import React, { useCallback } from "react";
 import { CgProfile } from "react-icons/cg";
 import { jwtDecode } from "jwt-decode";
 import { Poll } from "@/app/page";
@@ -133,6 +133,10 @@ const PollLayout = ({
     totalVotes += option.votes.length;
   });
 
+  const isActivePoll = useCallback(() => {
+    return new Date(poll.closeTime) > new Date();
+  }, [poll.closeTime]);
+
   React.useEffect(() => {
     poll.options.forEach((option) => {
       option.votes.forEach((vote: any) => {
@@ -170,7 +174,7 @@ const PollLayout = ({
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [decodedToken.id, poll.closeTime, poll.options, isActivePoll]);
 
   function timeAgo(dateString: string): string {
     const currentDate = new Date();
@@ -192,10 +196,6 @@ const PollLayout = ({
       return "Just now";
     }
   }
-
-  const isActivePoll = () => {
-    return new Date(poll.closeTime) > new Date();
-  };
 
   return (
     <div

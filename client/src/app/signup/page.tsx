@@ -26,7 +26,7 @@ const Signup = () => {
     if (localStorage.getItem("token")) {
       router.replace("/");
     }
-  }, []);
+  }, [router]);
 
   return (
     <div

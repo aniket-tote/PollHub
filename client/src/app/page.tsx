@@ -3,7 +3,7 @@
 import { AxiosError } from "axios";
 import axios, { initiateInterceptor } from "../service/axiosConfig";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useCallback } from "react";
 import toast from "react-hot-toast";
 import useColorMode from "@/redux/hooks/useColorMode";
 import CreatePoll from "@/components/CreatePoll";
@@ -33,7 +33,7 @@ export default function Home() {
 
   const [inactivePolls, setInactivePolls] = React.useState<Poll[]>([]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/poll`,
@@ -76,7 +76,7 @@ export default function Home() {
         console.log(error);
       }
     }
-  };
+  }, [router]);
 
   React.useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -85,7 +85,7 @@ export default function Home() {
       initiateInterceptor();
       fetchData();
     }
-  }, []);
+  }, [fetchData, router]);
 
   if (loading) {
     return <div>Loading...</div>;
