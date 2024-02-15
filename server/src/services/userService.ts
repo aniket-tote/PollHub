@@ -20,8 +20,11 @@ export const userService = {
 
   //add
   async addUser(userData: { name: string; email: string; password: string }) {
-    const user = await userRepository.findOneBy({ email: userData.email });
-    if (user != null) {
+    const user = await userRepository.find({
+      where: { email: userData.email },
+    });
+    console.log(user);
+    if (user.length > 0) {
       throw new MyError("User already exists with email: " + userData.email);
     }
     const newUser = new User();

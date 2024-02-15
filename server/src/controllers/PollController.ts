@@ -9,10 +9,11 @@ export const PollController = {
     try {
       const polls = await pollService.getAllPolls();
       if (polls.length == 0) {
-        return res.status(404).json({ error: "No Polls Found" });
+        return res.status(204).json({ error: "No Polls Found" });
       }
       return res.json(polls);
     } catch (error) {
+      console.log(error);
       return res.status(500).json({ error });
     }
   },

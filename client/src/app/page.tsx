@@ -47,6 +47,8 @@ export default function Home() {
 
       const data = await res.data;
 
+      console.log(data);
+
       if (res.status === 200 && data) {
         setActivePolls(
           data.filter((poll: Poll) => new Date(poll.closeTime) > new Date())
@@ -54,6 +56,10 @@ export default function Home() {
         setInactivePolls(
           data.filter((poll: Poll) => new Date(poll.closeTime) < new Date())
         );
+        setLoading(false);
+      } else if (res.status === 204) {
+        setActivePolls([]);
+        setInactivePolls([]);
         setLoading(false);
       }
     } catch (error) {
