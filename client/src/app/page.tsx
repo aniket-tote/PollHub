@@ -80,7 +80,7 @@ export default function Home() {
 
   React.useEffect(() => {
     if (!localStorage.getItem("token")) {
-      router.replace("/login");
+      router.push("/login");
     } else {
       initiateInterceptor();
       fetchData();
