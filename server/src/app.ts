@@ -12,7 +12,7 @@ const app = express();
 app.use(json());
 app.use(
   cors({
-    origin: ["http://localhost:3000/", "http://pollhub-anikettote.vercel.app/"],
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );

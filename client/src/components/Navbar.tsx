@@ -134,26 +134,28 @@ const Navbar = () => {
             <TbLogout2 />
           </button>
         )}
-        <button
-          onClick={() => {
-            router.push("/about");
-          }}
-          className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
-            pathname === "/about"
-              ? `${
-                  colorMode === "dark"
-                    ? "bg-[#EDEEF0] text-slate-900"
-                    : "bg-[#1C2024] text-white"
-                }`
-              : `${
-                  colorMode === "dark"
-                    ? "hover:bg-[#212225]"
-                    : "hover:bg-[#E1DEF2]"
-                }`
-          }`}
-        >
-          <CgProfile />
-        </button>
+        {isUserLogged && (
+          <button
+            onClick={() => {
+              router.push("/about");
+            }}
+            className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
+              pathname === "/about"
+                ? `${
+                    colorMode === "dark"
+                      ? "bg-[#EDEEF0] text-slate-900"
+                      : "bg-[#1C2024] text-white"
+                  }`
+                : `${
+                    colorMode === "dark"
+                      ? "hover:bg-[#212225]"
+                      : "hover:bg-[#E1DEF2]"
+                  }`
+            }`}
+          >
+            <CgProfile />
+          </button>
+        )}
 
         <button
           className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-2xl ${
