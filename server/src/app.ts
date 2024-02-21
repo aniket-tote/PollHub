@@ -8,19 +8,10 @@ import * as cookieParser from "cookie-parser";
 
 const app = express();
 
-const whitelist = [process.env.CLIENT_URL, "http://localhost:3000"];
-
 app.use(json());
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (whitelist.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://pollhub-anikettote.vercel.app",
     credentials: true,
   })
 );
