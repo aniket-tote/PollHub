@@ -85,7 +85,7 @@ export default function Home() {
       initiateInterceptor();
       fetchData();
     }
-  }, [fetchData, router]);
+  }, [router, fetchData]);
 
   if (loading) {
     return <div>Loading...</div>;
