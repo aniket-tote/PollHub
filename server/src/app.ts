@@ -11,7 +11,7 @@ const app = express();
 app.use(json());
 app.use(
   cors({
-    origin: "https://pollhub-anikettote.vercel.app",
+    origin: ["http://localhost:3000","https://pollhub-anikettote.vercel.app"],
     credentials: true,
   })
 );
