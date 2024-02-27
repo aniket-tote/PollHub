@@ -10,7 +10,7 @@ import { initiateInterceptor } from "../../service/axiosConfig";
 import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import Image from "next/image";
-import LoadingSvg from "@/public/loading.svg";
+import LoadingSvg from "public/loading.svg";
 
 const Login = () => {
   const { colorMode } = useColorMode();
@@ -56,6 +56,7 @@ const Login = () => {
           className="space-y-4 md:space-y-6"
           action="#"
           onSubmit={async (e) => {
+            setIsLoading(true);
             e.preventDefault();
 
             try {
@@ -90,6 +91,7 @@ const Login = () => {
                   password: "",
                 });
                 localStorage.setItem("token", resData.accessToken);
+                setIsLoading(false);
                 router.push("/");
               } else {
                 toast.error(`${resData.error}`, {
@@ -103,6 +105,7 @@ const Login = () => {
                 position: "top-center",
                 duration: 2000,
               });
+              setIsLoading(false);
             }
           }}
         >
@@ -161,7 +164,7 @@ const Login = () => {
               : "bg-[#CCF3EA] hover:bg-[#E0F8F3]"
               }`}
           >
-            { isLoading ? <Image src={LoadingSvg} width={100} height={100} alt="loading" /> : Submit}
+            {isLoading ? <Image src={LoadingSvg} width={100} height={100} alt="loading" /> : <span>Submit</span>}
           </button>
           <p className="text-sm font-light text-gray-500 ">
             Don&apos;t have an account?{" "}
