@@ -9,6 +9,7 @@ import axios from "axios";
 import { initiateInterceptor } from "../../service/axiosConfig";
 import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import Image from "next/image";
 
 const Login = () => {
   const { colorMode } = useColorMode();
@@ -23,6 +24,8 @@ const Login = () => {
     email: emailParam ? emailParam : "",
     password: "",
   });
+
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const router = useRouter();
 
@@ -152,12 +155,12 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className={`w-full focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${colorMode === "dark"
+            className={`login w-full focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ${colorMode === "dark"
               ? "bg-[#144240] hover:bg-[#0F2D2C]"
               : "bg-[#CCF3EA] hover:bg-[#E0F8F3]"
               }`}
           >
-            Submit
+            { isLoading ? <Image src={LoadingSvg} width={100} height={100} alt="loading" /> : Submit}
           </button>
           <p className="text-sm font-light text-gray-500 ">
             Don&apos;t have an account?{" "}
