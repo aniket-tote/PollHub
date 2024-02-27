@@ -10,6 +10,7 @@ import { initiateInterceptor } from "../../service/axiosConfig";
 import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import Image from "next/image";
+import LoadingSvg from "@/public/loading.svg";
 
 const Login = () => {
   const { colorMode } = useColorMode();
