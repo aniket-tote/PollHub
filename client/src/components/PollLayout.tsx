@@ -222,7 +222,7 @@ const PollLayout = ({
           <div className="nameandtime flex justify-between text-sm ">
             <div className="flex gap-2">
               <div className="name font-semibold">{poll.user.name}</div>
-              <div className="time text-gray-600">
+              <div className="time text-gray-400">
                 {timeAgo(poll.createdAt)}
               </div>
             </div>
@@ -250,7 +250,7 @@ const PollLayout = ({
           </div>
           {(!isActivePoll() || isVoted) && (
             <div className="votes">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-400">
                 {totalVotes} {totalVotes > 1 ? "votes" : "vote"}
               </div>
             </div>

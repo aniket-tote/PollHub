@@ -35,7 +35,7 @@ export const AuthController = {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: true,
-          sameSite: "strict",
+          sameSite: "None",
           maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
@@ -56,7 +56,7 @@ export const AuthController = {
       res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "None",
       });
 
       return res.status(200).json({ message: "Logout successful" });

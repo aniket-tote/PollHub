@@ -127,7 +127,7 @@ const Navbar = () => {
             onClick={() => {
               handleLogout();
             }}
-            className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
+            className={`logout p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
               colorMode === "dark" ? "hover:bg-[#212225]" : "hover:bg-[#E1DEF2]"
             }`}
           >
@@ -139,7 +139,7 @@ const Navbar = () => {
             onClick={() => {
               router.push("/about");
             }}
-            className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
+            className={`profile p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-xl ${
               pathname === "/about"
                 ? `${
                     colorMode === "dark"
@@ -158,7 +158,7 @@ const Navbar = () => {
         )}
 
         <button
-          className={`p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-2xl ${
+          className={`darkmode p-2 cursor-pointer font-semibold rounded-lg flex justify-center items-center text-2xl ${
             colorMode === "dark" ? "hover:bg-[#212225]" : "hover:bg-[#E1DEF2]"
           }`}
           onClick={toggleColorMode}
